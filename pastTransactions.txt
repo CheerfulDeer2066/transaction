@@ -1,21 +1,21 @@
 Caiden Lineman
 2022-05-31
-Balance: $1000
+Balance: $1000.00
 Type: Deposit
-Amount: $100
-New Balance: $1100
+Amount: $100.00
+New Balance: $1100.00
 ---
 Caiden Lineman
 2022-06-01
-Balance: $1100
+Balance: $1100.00
 Type: Withdrawl
-Amount: $100
-New Balance: $1000
+Amount: $100.00
+New Balance: $1000.00
 ---
 Mikaela Han
 2022-06-01
-Balance: $1100
-Type: Withdrawl
-Amount: $100
-New Balance: $1000
+Balance: $1100.00
+Type: Deposit
+Amount: $100.00
+New Balance: $1200.00
 ---

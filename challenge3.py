@@ -6,44 +6,48 @@ saving various bits of information about
 past transactions that can be used for future ones
 """
 import datetime
+# file of previous transaction values
+# global because opened by multiple functions
+filePath = 'C:/Users/Caden/Documents/Python/Python Projects/transaction/pastTransactions.txt'
 
 def beginTransaction():
-    # open file of previous transaction values
-    file = "C:\\Users\Robotics\Desktop\Caiden\exam\pastTransactions.txt"
-    file = open(file)
-
     # create a list for the current transaction data
-    transactionInfo = []
-
     # add name to transaction
-    transactionInfo.append(input("Full Name: ").title())
+    transactionInfo = [input("Full Name: ").title()]
 
     # add date to transaction
     date = datetime.date.today()
     transactionInfo.append(date)
 
     # find users' most recent transaction (if applicable)
-    lastTransaction = findUserAccount(transactionInfo, file)
+    lastTransaction = findUserAccount(transactionInfo)
+
     if lastTransaction == -999:  # if the user wants to end the program
-        return  # preferably would restart program instead but recursion broke literally everything
+        return  # preferably would restart program instead but recursion broke literally everything to just dies instead
     elif lastTransaction == -1:
         currentBalance = 0
         transactionInfo.append(currentBalance)
     else:
-        findCurrentBalance()
+        currentBalance = findCurrentBalance(lastTransaction)
+        transactionInfo.append(currentBalance)
+
+    print(f"Current Balance: ${transactionInfo[2]}")
 
 
 """
 Possible Return Values for findUserAccount:
     -1: Create a new account for the user
     -999: End the program
-    else: User's most recent transaction was at this index in the file
+    else: User's most recent transaction was at this index in the file (should work for any file length)
 """
-def findUserAccount(transactionInfo, file):
+def findUserAccount(transactionInfo):
+    # open file of previous transaction values
+    file = open(filePath)
+
     # create list of names of past users (names on any line indexes that are divisible by 7)
     pastUsers = []
     for i, line in enumerate(file):
-        if i == 0 or i % 7 == 0:  # if on line 2, print current line
+        if i == 0 or i % 7 == 0:  # names in past transactions are saved on multiples of 7
             pastUsers.append(line.strip())
 
     # starting at the end, search through names
@@ -52,32 +56,34 @@ def findUserAccount(transactionInfo, file):
         # check if a name matches name in current transaction's data
         if transactionInfo[0] == pastUsers[currentTransactionIndex]:
             print("User Found!")
-            recentTransactionLine = (currentTransactionIndex * 7) + 1
-            break
+            # Return first line index of current user's most recent transaction
+            # this number is the line index of the user's name (1 less than the line number)
+            file.close()
+            return (currentTransactionIndex * 7)
         elif currentTransactionIndex == 0:  # name was not found in any transaction
             print("User not Found...")
             # ask if user wants to create an account or end the program
             prompt = input(f"Would you like to open an account under the name {transactionInfo[0]}?: ")
-            while prompt not in ["yes", "y", "no", "n"]: # ensure input is valid
+            while prompt not in ["yes", "y", "no", "n"]:  # ensure input is valid
                 print("Invalid Response")
                 prompt = input(f"Would you like to open an account under the name {transactionInfo[0]}?: ")
-            if prompt in ["yes", "y"]:  # create new account (no line index found, so return -1)
+            if prompt in ["yes", "y"]:  # create new account (no line index found, so return -1 for if statement)
+                file.close()
                 return -1
-            else:  # end program
+            else:  # end program via if statement later
                 print("---")
+                file.close()
                 return -999
 
-    # Return first line index of current users' most recent transaction
-    # this number is 1 the line index of the users' name (1 less than the line number)
-    return (currentTransactionIndex * 7)
 
-def findCurrentBalance():
-    pass
-    """
-    check at the most recent transaction index + 5
-    start the search at an index that ignores "New Balance: $",
-    as this part is constant and is present in every transaction
-    return this value as the user's current balance for use in the new transaction
-    """
+def findCurrentBalance(accountLineNumber):
+    # open file of previous transaction values
+    file = open(filePath)
+
+    balanceIndex = accountLineNumber + 5
+    for i, line in enumerate(file):
+        if i == balanceIndex:
+            file.close()
+            return float(line[14:-1])
 
 beginTransaction()
